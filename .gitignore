@@ -130,3 +130,5 @@ dmypy.json
 
 
 lake/
+.DS_Store
+.env.save

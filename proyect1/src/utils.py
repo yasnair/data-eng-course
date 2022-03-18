@@ -1,10 +1,8 @@
 
-from distutils.log import ERROR
-from http.client import OK
 from psycopg2 import connect, sql
 import sys, os
 from decouple import config
-from datetime import date
+from datetime import datetime
 from zipfile import ZipFile
 
 
@@ -14,7 +12,7 @@ def get_db_connect():
 
         # declare a new PostgreSQL connection object
         conn = connect (
-            dbname = "trip",
+            dbname = "postgres",
             user = "postgres",
             host = "localhost",
             password = "postgres"
@@ -39,12 +37,19 @@ def get_dir(dirName):
         print("Directory " , new_path,  " Created ")
 
     return dirName
+def get_path_file(filename):
+    for root, dirs, files in os.walk(os.getcwd()):
+        for name in files:
+            if name == filename:
+                return os.path.abspath(os.path.join(root, name))
 
 def get_date_to_run():
     try:
         date_to_run = sys.argv[1]
     except IndexError:   
-        date_to_run = date.today().year + date.today().month
+        now = datetime.now() # current date and time
+        date_to_run = now.strftime("%Y") + now.strftime("%m")
+        date_to_run = '201306'
     return date_to_run
 
 def unzip_file(dir_originfiles, dir_processedfiles,date_to_run):
@@ -55,7 +60,23 @@ def unzip_file(dir_originfiles, dir_processedfiles,date_to_run):
         with ZipFile(filepath, 'r') as zipObj:
             # Extract all the contents of zip file in different directory
             zipObj.extractall(dir_processedfiles)
-        return OK, filepath
+        return 'OK', filepath
 
     except:
-        return ERROR, ''
+        return 'ERROR', ''
+
+def get_common_var():
+    dir_originfiles       = get_dir('lake/origin_files/')
+    dir_processedfiles    = get_dir('lake/processed_files/')
+    date_to_run           = get_date_to_run()
+    #filename              = f'{date_to_run}-citibike-tripdata.zip'
+    zipfilepath           = os.path.join(dir_originfiles , f'{date_to_run}-citibike-tripdata.zip')
+    return {
+        'dir_originfiles'       : dir_originfiles,
+        'dir_processedfiles'    : dir_processedfiles,
+        'date_to_run'           : date_to_run,
+        'zipfilepath'           : zipfilepath
+
+    }
+
+

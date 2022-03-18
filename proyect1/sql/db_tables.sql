@@ -4,6 +4,7 @@ DROP TABLE if exists dim_station;
 DROP TABLE if exists dim_bike;
 DROP TABLE if exists dim_user_type;
 DROP TABLE if exists dim_date;
+DROP TABLE if EXISTS rawdata;
 CREATE TABLE dim_station(  
     station_id INT NOT NULL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -77,21 +78,21 @@ CREATE TABLE fact_trip(
 
 
 CREATE TABLE rawdata(  
-  tripduration           INT,
-  starttime               TIMESTAMP,
-  stoptime                TIMESTAMP,
-  start_station_id        INT,
+  tripduration            VARCHAR(255), 
+  starttime               VARCHAR(255), 
+  stoptime                VARCHAR(255), 
+  start_station_id        VARCHAR(255), 
   start_station_name      VARCHAR(255),  
-  start_station_latitude  POINT,
-  start_station_longitude POINT,
-  end_station_id          INT,
+  start_station_latitude  VARCHAR(255),
+  start_station_longitude VARCHAR(255),
+  end_station_id          VARCHAR(255), 
   end_station_name        VARCHAR(255),
-  end_station_latitude    POINT,
-  end_station_longitude   POINT ,
-  bike_id                 INT,                    
+  end_station_latitude    VARCHAR(255),
+  end_station_longitude   VARCHAR(255) ,
+  bike_id                 VARCHAR(255),                     
   user_type               VARCHAR(20),
-  birth_year              INT,      
-  gender                  INT
+  birth_year              VARCHAR(255),     
+  gender                  VARCHAR(255)
 );
 
 
