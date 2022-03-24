@@ -33,18 +33,6 @@ def get_date_to_run():
         date_to_run = now.strftime("%Y") + now.strftime("%m")
     return date_to_run
 
-def unzip_file(dir_originfiles, dir_processedfiles,date_to_run):
-    filename = f'{date_to_run}-citibike-tripdata.zip'
-    filepath = os.path.join(dir_originfiles , filename)
-    try:
-
-        with ZipFile(filepath, 'r') as zipObj:
-            # Extract all the contents of zip file in different directory
-            zipObj.extractall(dir_processedfiles)
-        return 'OK', filepath
-
-    except:
-        return 'ERROR', ''
 
 def file_exist(path: str, pattern: str): 
     files = list(filter(lambda x: pattern in x, os.listdir(path)))
