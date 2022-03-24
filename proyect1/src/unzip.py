@@ -1,18 +1,33 @@
-from datetime import date
-from zipfile import ZipFile
-import utils, os
+"""
+- INGEST DATA:
+    - Create directory to unzip files.
+    - Save files in folder with files pending of proccesing.
+"""
 
-#dir lake
-variables = utils.get_common_var()
-date_to_run = variables['date_to_run']
-filename = f'{date_to_run}-citibike-tripdata.zip'
-filepath = os.path.join(variables['dir_originfiles'] , filename)
+import os
+from zipfile    import ZipFile
+from parameters import FOLDER_ORIGIN_FILES, FOLDER_RAW_FILES, FIX_FILE_PATH
+from utils      import (
+                            get_dir,
+                            get_date_to_run,
+                            file_exist
+                        )
 
-try:
+def main():
+    path_origin    = get_dir(FOLDER_ORIGIN_FILES)
+    path_final     = get_dir(FOLDER_RAW_FILES)
+    date_to_run    = get_date_to_run()
+    filename       = path_origin + date_to_run + FIX_FILE_PATH + '.zip' #File .zip
 
-    with ZipFile(filepath, 'r') as zipObj:
-        # Extract all the contents of zip file in different directory
-        zipObj.extractall(variables['dir_processedfiles'])
-    print(f'File {filename} created.')
-except:
-    print(f'ERROR: {filepath} could not processed')
+    if os.path.exists(filename):
+        if not file_exist(path_final, date_to_run):
+           with ZipFile(filename,'r') as zipObj:
+            # Extract all the contents of zip file in different directory
+            zipObj.extractall(path_final) 
+        else:
+            print(f'Date {date_to_run} was already processed. Not actions taken.')
+    else:
+        print(f'File {filename} does not exists...')
+
+if __name__ == '__main__':
+    main()

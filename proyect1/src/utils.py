@@ -1,32 +1,13 @@
 
-from psycopg2 import connect, sql
+
+import pandas as pd
 import sys, os
 from decouple import config
 from datetime import datetime
 from zipfile import ZipFile
-
-
-def get_db_connect():
-    # instantiate a cursor object from the connection
-    try:
-
-        # declare a new PostgreSQL connection object
-        conn = connect (
-            dbname = "postgres",
-            user = "postgres",
-            host = "localhost",
-            password = "postgres"
-        )
-        
-        # attempt to create a cursor object
-        cursor = conn.cursor()
-
-    except Exception as err:
-        # set the cursor to None if exception
-        cursor = None
-        print ("\npsycopg2 error:", err)
-
-    return conn, cursor
+import psycopg2
+from psycopg2 import OperationalError
+  
 
 def get_dir(dirName):
     # Create target directory & all intermediate directories if don't exists
@@ -37,6 +18,7 @@ def get_dir(dirName):
         print("Directory " , new_path,  " Created ")
 
     return dirName
+
 def get_path_file(filename):
     for root, dirs, files in os.walk(os.getcwd()):
         for name in files:
@@ -49,7 +31,6 @@ def get_date_to_run():
     except IndexError:   
         now = datetime.now() # current date and time
         date_to_run = now.strftime("%Y") + now.strftime("%m")
-        date_to_run = '201306'
     return date_to_run
 
 def unzip_file(dir_originfiles, dir_processedfiles,date_to_run):
@@ -65,18 +46,39 @@ def unzip_file(dir_originfiles, dir_processedfiles,date_to_run):
     except:
         return 'ERROR', ''
 
-def get_common_var():
-    dir_originfiles       = get_dir('lake/origin_files/')
-    dir_processedfiles    = get_dir('lake/processed_files/')
-    date_to_run           = get_date_to_run()
-    #filename              = f'{date_to_run}-citibike-tripdata.zip'
-    zipfilepath           = os.path.join(dir_originfiles , f'{date_to_run}-citibike-tripdata.zip')
-    return {
-        'dir_originfiles'       : dir_originfiles,
-        'dir_processedfiles'    : dir_processedfiles,
-        'date_to_run'           : date_to_run,
-        'zipfilepath'           : zipfilepath
+def file_exist(path: str, pattern: str): 
+    files = list(filter(lambda x: pattern in x, os.listdir(path)))
+    if files:
+        return True
+    else:
+         return False
 
-    }
+def connect(conn_params_dic):
+    conn = None
+    try:
+        print('Connecting to the PostgreSQL...........')
+        conn = psycopg2.connect(**conn_params_dic)
+        print("Connection successfully..................")
+        
+    except OperationalError as err:
+        # passing exception to function
+        show_psycopg2_exception(err)        
+        # set the connection to 'None' in case of error
+        conn = None
+    return conn
 
-
+# Define a function that handles and parses psycopg2 exceptions
+def show_psycopg2_exception(err):
+    # get details about the exception
+    err_type, err_obj, traceback = sys.exc_info()    
+    # get the line number when exception occured
+    line_n = traceback.tb_lineno    
+    # print the connect() error
+    print ("\npsycopg2 ERROR:", err, "on line number:", line_n)
+    print ("psycopg2 traceback:", traceback, "-- type:", err_type) 
+    # psycopg2 extensions.Diagnostics object attribute
+    print ("\nextensions.Diagnostics:", err.diag)    
+    # print the pgcode and pgerror exceptions
+    print ("pgerror:", err.pgerror)
+    print ("pgcode:", err.pgcode, "\n")  
+            
