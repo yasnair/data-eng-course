@@ -1,6 +1,7 @@
 # data-eng-course
+Data set: https://ride.citibikenyc.com/system-data.
 
-Lake: HDD
+Ingest: Wget/zipfile
 
 Warehouse: Postgresql
 
