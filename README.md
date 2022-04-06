@@ -1,5 +1,4 @@
 # data-eng-course
-Ingest: Python Requests library
 
 Lake: HDD
 
@@ -29,9 +28,4 @@ Open a terminal inside data-eng-course folder and run:
 Open Falcon, connect with your DB and copy the query from:
 
 https://github.com/yasnair/data-eng-course/blob/68ebe68598116b42a0088c626fe4fa6a849eaa45/proyect1/db/sql/querys.sql
-
-
-
-
-
 
