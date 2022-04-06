@@ -4,7 +4,7 @@ DATE = 201306
 VENV := .venv
 
 # default target, when make executed without arguments
-default: venv ingest pipeline fill_db
+default: fill_db clean
 
 $(VENV)/bin/activate: requirements.txt
 	python3 -m venv $(VENV)
@@ -12,16 +12,27 @@ $(VENV)/bin/activate: requirements.txt
 
 # venv is a shortcut target
 venv: $(VENV)/bin/activate
+	  echo "....Creating virtual enviroment...."
+	  
 
 ingest: venv
 	 	python3 ${CD}/proyect1/src/donwload_zip.py $(DATE)
 		python3 ${CD}/proyect1/src/unzip.py $(DATE)
+		echo "....Ingesting Data...."
+		
+
+pipeline: ingest
+		  python3 ${CD}/proyect1/src/clean_data.py $(DATE)
+		  echo "....Cleaning Data...."
+		  
+
+fill_db: pipeline
+		 python3 ${CD}/proyect1/db/fill_db.py $(DATE)
+		 echo "....Filling DB...."
 
 
-pipeline: venv
-		python3 ${CD}/proyect1/src/process_raw_data.py $(DATE)
-
-fill_db: venv
-		 python3 ${CD}/proyect1/db/src/fill_db.py
+clean:
+	rm -rf ${CD}/lake/
+	
 
 .PHONY: default venv run clean

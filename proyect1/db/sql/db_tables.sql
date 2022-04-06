@@ -1,12 +1,12 @@
-DROP  TABLE "fact_trip";
-DROP  TABLE "dim_bike";
-DROP  TABLE "dim_date";
-DROP TABLE "dim_station";
+DROP  TABLE IF EXISTS "fact_trip";
+DROP  TABLE IF EXISTS  "dim_bike";
+DROP  TABLE IF EXISTS  "dim_date";
+DROP  TABLE IF EXISTS "dim_station";
 
-DROP  TABLE "dim_user_type";
+DROP  TABLE IF EXISTS  "dim_user_type";
 
-DROP TABLE "dim_gender";
-DROP TABLE "rawdata";
+DROP  TABLE IF EXISTS "dim_gender";
+DROP  TABLE IF EXISTS  "rawdata";
 
 CREATE TABLE IF NOT EXISTS dim_station(  
     station_id INT NOT NULL PRIMARY KEY,

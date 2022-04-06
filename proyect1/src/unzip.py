@@ -4,10 +4,11 @@
     - Save files in folder with files pending of proccesing.
 """
 
-import os
+import os,sys
+sys.path.insert(1, f'{os.getcwd()}/proyect1/utils')
 from zipfile    import ZipFile
 from parameters import FOLDER_ORIGIN_FILES, FOLDER_RAW_FILES, FIX_FILE_PATH
-from utils      import (
+from utils_all    import (
                             get_dir,
                             get_date_to_run,
                             file_exist

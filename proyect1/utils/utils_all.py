@@ -8,9 +8,8 @@ from zipfile import ZipFile
 import psycopg2
 from psycopg2 import OperationalError
   
-
-def get_dir(dirName):
-    # Create target directory & all intermediate directories if don't exists
+# Create target directory & all intermediate directories if don't exists
+def get_dir(dirName:str):
     actual_dir= os.getcwd()
     new_path = os.path.join(actual_dir, dirName)
     if not os.path.exists(new_path):
@@ -19,12 +18,14 @@ def get_dir(dirName):
 
     return dirName
 
-def get_path_file(filename):
+#Given a filename returns the filepath
+def get_path_file(filename:str):
     for root, dirs, files in os.walk(os.getcwd()):
         for name in files:
             if name == filename:
                 return os.path.abspath(os.path.join(root, name))
 
+#Get the date to execute the process. 
 def get_date_to_run():
     try:
         date_to_run = sys.argv[1]
@@ -33,14 +34,14 @@ def get_date_to_run():
         date_to_run = now.strftime("%Y") + now.strftime("%m")
     return date_to_run
 
-
+#check if a file exists
 def file_exist(path: str, pattern: str): 
     files = list(filter(lambda x: pattern in x, os.listdir(path)))
     if files:
         return True
     else:
          return False
-
+'''
 def connect(conn_params_dic):
     conn = None
     try:
@@ -70,3 +71,4 @@ def show_psycopg2_exception(err):
     print ("pgerror:", err.pgerror)
     print ("pgcode:", err.pgcode, "\n")  
             
+'''

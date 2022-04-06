@@ -1,9 +1,10 @@
 
 # import the error handling libraries for psycopg2
 from psycopg2 import OperationalError,connect
-from db_parameters import DB_NAME, CONN_DB_DIC
+from parameters import DB_NAME, CONN_DB_DIC
 import psycopg2
-import sys, os
+import sys
+from utils_all import get_path_file
 
 def connect(conn_params_dic):
     conn = None
@@ -33,12 +34,13 @@ def show_psycopg2_exception(err):
     # print the pgcode and pgerror exceptions
     print ("pgerror:", err.pgerror)
     print ("pgcode:", err.pgcode, "\n")  
-
+'''
 def get_path_file(filename):
     for root, dirs, files in os.walk(os.getcwd()):
         for name in files:
             if name == filename:
                 return os.path.abspath(os.path.join(root, name))
+'''
 
 def execute_sql_file(sql_file: str, message: str):
     conn_params_dic = CONN_DB_DIC
@@ -49,7 +51,6 @@ def execute_sql_file(sql_file: str, message: str):
     if conn!=None:
         try:
             print(f'Creating {message} from {sql_file} file ..................')
-            dir_path = os.path.dirname(os.path.realpath(__file__))
             file_path = get_path_file(sql_file)
             cursor = conn.cursor()
 

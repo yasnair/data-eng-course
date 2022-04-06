@@ -4,9 +4,11 @@
     - Create  Tables.
     - Fill master data.
 """
-from db_parameters import DB_NAME, CONN_DB_DIC, DB_TABLES_FILENAME, DIM_MASTER_DATA_FILENAME
+import sys, os
+sys.path.insert(1, f'{os.getcwd()}/proyect1/utils')
+from parameters import DB_NAME, CONN_DB_DIC, DB_TABLES_FILENAME, DIM_MASTER_DATA_FILENAME
 from psycopg2 import OperationalError
-from utils import (
+from utils_db import (
     connect, 
     show_psycopg2_exception,
     execute_sql_file
@@ -37,6 +39,8 @@ def create_db():
             # Closing the cursor & connection
             cursor.close()
             conn.close()
+            conn_params_dic['database'] = DB_NAME
+
             
         except OperationalError as err:
 

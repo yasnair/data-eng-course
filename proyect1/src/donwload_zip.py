@@ -4,9 +4,10 @@
     - Donwload the file based on the date in argv[1] list or actual date if no value is set.
 """
 import wget
-import os
+import os, sys
+sys.path.insert(1, f'{os.getcwd()}/proyect1/utils')
 from parameters import FOLDER_ORIGIN_FILES, URL_BASE, FIX_FILE_PATH
-from utils import (
+from utils_all import (
     get_dir,
     get_date_to_run
 )

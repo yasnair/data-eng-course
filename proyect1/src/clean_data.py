@@ -5,16 +5,16 @@
     - Load data into DB table 
 """
 
-import os
+from operator import index
+import os,sys
+sys.path.insert(1, f'{os.getcwd()}/proyect1/utils')
 import pandas as pd
 from io import StringIO
 from psycopg2 import OperationalError
-from parameters import FIX_FILE_PATH, conn_params_dic, FOLDER_RAW_FILES
-from utils import (
+from parameters import FIX_FILE_PATH,  FOLDER_RAW_FILES, FOLDER_DATA_CLEANED
+from utils_all import (
     get_dir,
-    get_date_to_run,
-    show_psycopg2_exception,
-    connect
+    get_date_to_run
 )
 
 
@@ -46,39 +46,17 @@ def convert_int_values(df, column_names):
         df[column_name]= df[column_name].astype(int)
     return df
 
-
-def load_raw_data_bd(df, conn_params_dic):
-    conn = connect(conn_params_dic)
-    conn.autocommit = True
-
-    if conn!=None:
-        # save dataframe to an in memory buffer
-        buffer = StringIO()
-        df.to_csv(buffer, header=False, index = False)
-        buffer.seek(0)
-
-        try:
-
-            cursor = conn.cursor()
-            cursor.execute('TRUNCATE TABLE rawdata;')
-            conn.commit()
-
-            cursor.copy_from(buffer, 'rawdata', sep=",")
-
-            conn.commit()
-            print("Raw data loaded successfully..................")
-            # close the cursor object to avoid memory leaks
-            cursor.close()
-
-            # close the connection object
-            conn.close()
-            
-        except OperationalError as err:
-            # pass exception to function
-            show_psycopg2_exception(err)
-            # set the connection to 'None' in case of error
-            conn = None
+def create_clean_file(df):
+    path            = get_dir(FOLDER_DATA_CLEANED) 
+    date_to_run     = get_date_to_run()
+    filename        = path + date_to_run + FIX_FILE_PATH + '.csv' #File .csv
+    if os.path.exists(filename):
+        print('This file was alrady procesed......')
+    else:
+        print('Creating clean file......')
+        df.to_csv(filename, index = False) 
     
+
 def main():
     path            = get_dir(FOLDER_RAW_FILES)
     date_to_run     = get_date_to_run()
@@ -100,28 +78,8 @@ def main():
                         pipe(drop_missing).
                         pipe(remove_outliers_dates, 'starttime', 'stoptime').
                         pipe(convert_int_values, ['start station id', 'end station id', 'birth year']).
-                        pipe(load_raw_data_bd, conn_params_dic)
+                        pipe(create_clean_file)
                     )
 
 if __name__ == '__main__':
     main()
-'''
-variables = get_common_var()
-date_to_run = variables['date_to_run']
-filename = date_to_run + FIX_FILE_PATH + '.csv'
-filepath = get_path_file(filename)
-
-
-col_names=['tripduration','starttime','stoptime','start_station_id','end_station_id', 'bikeid', 'gender']
-df = pd.read_csv(filepath)
-df.head()
-
-df_cleaned = ( df.
-                pipe(copy_df).
-                pipe(drop_missing).
-                pipe(remove_outliers_dates, 'starttime', 'stoptime').
-                pipe(convert_int_values, ['start station id', 'end station id', 'birth year']).
-                pipe(load_raw_data_bd, conn_params_dic)
-            )
-'''
-
